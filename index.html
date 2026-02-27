@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fala Logo!</title>
+  <meta name="description" content="Não mande só 'oi'. Fala logo o que você precisa. Vale pra humanos e IAs.">
+  <meta property="og:title" content="Fala Logo!">
+  <meta property="og:description" content="Não mande só 'oi'. Fala logo o que você precisa.">
+  <meta property="og:url" content="https://falalogo.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    @layer base, layout, components, animations;
+
+    /* ================================================================
+       BASE
+    ================================================================ */
+    @layer base {
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --color-bg:         #FAFAF8;
+        --color-text:       #111111;
+        --color-muted:      #6B6B6B;
+        --color-faint:      #ABABAB;
+        --color-accent:     #E63946;
+        --color-accent-dim: color-mix(in srgb, #E63946 12%, transparent);
+        --color-accent-mid: color-mix(in srgb, #E63946 30%, transparent);
+        --color-border:     color-mix(in srgb, #111111 12%, transparent);
+        --color-rule:       #111111;
+
+        /* slack dark palette */
+        --slack-bg:         #1A1D21;
+        --slack-surface:    #222529;
+        --slack-bar:        #111318;
+        --slack-border:     #393B3D;
+        --slack-text:       #D1D2D3;
+        --slack-muted:      #8C8B92;
+        --slack-faint:      #64636B;
+        --slack-white:      #FFFFFF;
+        --slack-green:      #2BB27E;
+
+        --font-serif:  'Playfair Display', Georgia, serif;
+        --font-sans:   'Inter', system-ui, sans-serif;
+
+        --space-xs:    0.5rem;
+        --space-sm:    1rem;
+        --space-md:    2rem;
+        --space-lg:    4rem;
+        --space-xl:    7rem;
+
+        --max-w:       740px;
+        --max-w-wide:  900px;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        font-size: 17px;
+      }
+
+      body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-weight: 400;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      h1, h2, h3, h4 {
+        font-family: var(--font-serif);
+        font-weight: 700;
+        line-height: 1.1;
+        text-wrap: balance;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        color: var(--color-muted);
+        margin-block-end: 1rem;
+      }
+
+      p strong {
+        color: var(--color-text);
+        font-weight: 700;
+      }
+
+      ul, ol { list-style: none; }
+
+      a {
+        color: var(--color-accent);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      a:hover { text-decoration: none; }
+
+      code {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+        font-size: 0.85em;
+        background: rgba(255,255,255,0.12);
+        padding: 0.1em 0.35em;
+        border-radius: 3px;
+      }
+    }
+
+    /* ================================================================
+       LAYOUT
+    ================================================================ */
+    @layer layout {
+      .container {
+        max-inline-size: var(--max-w);
+        margin-inline: auto;
+        padding-inline: 1.5rem;
+      }
+
+      .container--wide {
+        max-inline-size: var(--max-w-wide);
+        margin-inline: auto;
+        padding-inline: 1.5rem;
+      }
+
+      /* Section wrapper */
+      .section {
+        padding-block: var(--space-xl);
+      }
+
+      /* Two-col layout for desktop: roman numeral + content */
+      .section-inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+      }
+
+      @media (min-width: 768px) {
+        .section-inner {
+          grid-template-columns: 80px 1fr;
+          gap: 3rem;
+          align-items: start;
+        }
+      }
+
+      /* Section rule */
+      .section-rule {
+        border: none;
+        border-block-start: 3px solid var(--color-rule);
+        margin-block: 0;
+      }
+
+      /* Hero layout */
+      .hero {
+        min-block-size: 100svh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding-inline: 1.5rem;
+        padding-block: 5rem 3rem;
+        position: relative;
+        overflow: hidden;
+      }
+    }
+
+    /* ================================================================
+       COMPONENTS
+    ================================================================ */
+    @layer components {
+
+      /* ── Scroll progress ── */
+      .scroll-progress {
+        position: fixed;
+        inset-block-start: 0;
+        inset-inline: 0;
+        block-size: 3px;
+        background: var(--color-accent);
+        transform-origin: 0 50%;
+        scale: 0 1;
+        z-index: 999;
+        animation: grow-x linear both;
+        animation-timeline: scroll(root block);
+      }
+
+      /* ── Hero ── */
+      .hero-badge {
+        display: inline-block;
+        border: 1px solid var(--color-border);
+        padding: 0.3rem 1rem;
+        font-family: var(--font-sans);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin-block-end: 2.5rem;
+      }
+
+      .hero-h1 {
+        font-family: var(--font-serif);
+        font-weight: 900;
+        font-size: clamp(5.5rem, 18vw, 13rem);
+        line-height: 0.92;
+        letter-spacing: -0.04em;
+        color: var(--color-text);
+        margin-block-end: 2rem;
+      }
+
+      .hero-tagline {
+        font-family: var(--font-sans);
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+        color: var(--color-muted);
+        max-inline-size: 520px;
+        line-height: 1.6;
+        margin-block-end: 3rem;
+        text-wrap: balance;
+      }
+
+      .hero-tagline strong { color: var(--color-text); }
+
+      .scroll-hint {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-faint);
+        animation: bounce-y 2.2s ease-in-out infinite;
+      }
+
+      .scroll-hint-arrow {
+        font-size: 1.2rem;
+        line-height: 1;
+      }
+
+      /* ── Roman numeral decorative ── */
+      .roman {
+        display: none;
+        font-family: var(--font-serif);
+        font-weight: 900;
+        font-size: 5rem;
+        line-height: 1;
+        color: color-mix(in srgb, var(--color-text) 8%, transparent);
+        user-select: none;
+        padding-block-start: 0.4rem;
+        letter-spacing: -0.04em;
+      }
+
+      @media (min-width: 768px) {
+        .roman { display: block; }
+      }
+
+      /* ── Section label (sticky) ── */
+      .section-label {
+        display: inline-block;
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-accent);
+        border: 1px solid var(--color-accent-mid);
+        padding: 0.25rem 0.65rem;
+        margin-block-end: 1.5rem;
+        position: sticky;
+        top: 1.25rem;
+        width: fit-content;
+        background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 10;
+      }
+
+      /* ── Section heading ── */
+      .section-h2 {
+        font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+        font-weight: 900;
+        margin-block-end: 1.5rem;
+      }
+
+      /* ── Pull quote ── */
+      .pull-quote {
+        font-family: var(--font-serif);
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 700;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        color: var(--color-text);
+        border-inline-start: 4px solid var(--color-accent);
+        padding-inline-start: 1.5rem;
+        margin-block: 2.5rem;
+        text-wrap: balance;
+      }
+
+      /* ── Badge pair ── */
+      .badge {
+        display: inline-block;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.22rem 0.65rem;
+        margin-block-end: 0.75rem;
+        border-radius: 2px;
+      }
+
+      .badge--bad {
+        background: color-mix(in srgb, #E63946 10%, transparent);
+        color: #E63946;
+        border: 1px solid color-mix(in srgb, #E63946 28%, transparent);
+      }
+
+      .badge--good {
+        background: color-mix(in srgb, #2BB27E 10%, transparent);
+        color: #1a7a55;
+        border: 1px solid color-mix(in srgb, #2BB27E 28%, transparent);
+      }
+
+      /* ── Slack window ── */
+      .slack-window {
+        background: var(--slack-bg);
+        border: 1px solid var(--slack-border);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-block: 1rem 1.75rem;
+        font-size: 0.9rem;
+        font-family: var(--font-sans);
+      }
+
+      .slack-messages { padding-block: 0.5rem 0.75rem; }
+
+      .slack-date-divider {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.55rem 1rem;
+        font-size: 0.7rem;
+        color: var(--slack-faint);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .slack-date-divider::before,
+      .slack-date-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--slack-border);
+      }
+
+      .slack-msg {
+        display: grid;
+        grid-template-columns: 52px 1fr;
+        padding: 0.2rem 1rem 0.2rem 0.75rem;
+        transition: background 0.1s;
+        cursor: default;
+      }
+
+      .slack-msg:hover {
+        background: color-mix(in srgb, #2C2D30 60%, transparent);
+      }
+
+      .slack-msg.compact {
+        padding-block: 0.04rem;
+      }
+
+      .slack-msg.compact .s-avatar { visibility: hidden; }
+      .slack-msg.compact .s-meta   { display: none; }
+
+      .s-avatar-col {
+        display: flex;
+        justify-content: center;
+        padding-block-start: 0.18rem;
+      }
+
+      .s-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: #fff;
+        flex-shrink: 0;
+        user-select: none;
+      }
+
+      .s-body {
+        min-width: 0;
+        padding-block-start: 0.1rem;
+      }
+
+      .s-meta {
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        margin-block-end: 0.08rem;
+      }
+
+      .s-name {
+        font-weight: 700;
+        font-size: 0.86rem;
+        color: var(--slack-white);
+      }
+
+      .s-time {
+        font-size: 0.68rem;
+        color: var(--slack-faint);
+      }
+
+      .s-text {
+        color: var(--slack-text);
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .slack-wait {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.55rem 1rem;
+        font-size: 0.7rem;
+        color: var(--slack-faint);
+        font-weight: 700;
+        font-style: italic;
+      }
+
+      .slack-wait::before,
+      .slack-wait::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--slack-border);
+      }
+
+      .slack-typing {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 1rem 0.45rem calc(0.75rem + 52px);
+        font-size: 0.73rem;
+        color: var(--slack-faint);
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 3px;
+        align-items: center;
+      }
+
+      .typing-dots span {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--slack-muted);
+        animation: typing-dot 1.2s infinite;
+      }
+
+      .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+      .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+
+      /* ── Problem list (🔴) ── */
+      .problem-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        margin-block: 1.75rem 0;
+      }
+
+      .problem-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        color: var(--color-muted);
+        font-size: 0.97rem;
+        line-height: 1.55;
+      }
+
+      .problem-list .li-icon {
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        margin-block-start: 0.28rem;
+      }
+
+      /* ── Rules list (✅) ── */
+      .rules-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-block: 1.75rem 0;
+      }
+
+      .rules-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        color: var(--color-muted);
+        font-size: 0.97rem;
+        line-height: 1.55;
+      }
+
+      .rules-list .li-icon {
+        flex-shrink: 0;
+        font-size: 1rem;
+        margin-block-start: 0.08rem;
+      }
+
+      .rules-list strong { color: var(--color-text); }
+
+      /* ── Callout ── */
+      .callout {
+        border-inline-start: 3px solid color-mix(in srgb, #E8B85C 80%, transparent);
+        background: color-mix(in srgb, #E8B85C 6%, var(--color-bg));
+        padding: 1rem 1.25rem;
+        margin-block: 2rem 0;
+        font-size: 0.92rem;
+        color: var(--color-muted);
+        border-radius: 0 2px 2px 0;
+      }
+
+      .callout strong { color: var(--color-text); }
+
+      /* ── AI box ── */
+      .ai-box {
+        border: 1px solid color-mix(in srgb, #111111 15%, transparent);
+        border-radius: 2px;
+        padding: 2rem;
+        margin-block: 2rem;
+        background: color-mix(in srgb, var(--color-text) 3%, var(--color-bg));
+      }
+
+      .ai-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        border: 1px solid var(--color-border);
+        padding: 0.22rem 0.7rem;
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin-block-end: 1.25rem;
+      }
+
+      .ai-box-heading {
+        font-size: clamp(1.2rem, 3vw, 1.6rem);
+        font-weight: 900;
+        margin-block-end: 0.75rem;
+        color: var(--color-text);
+      }
+
+      /* ── CTA section ── */
+      .cta-section {
+        text-align: center;
+        padding-block: var(--space-xl);
+      }
+
+      .cta-h2 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 900;
+        margin-block-end: 1.25rem;
+      }
+
+      .share-actions {
+        margin-block-start: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .share-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--color-text);
+        color: var(--color-bg);
+        border: none;
+        border-radius: 2px;
+        padding: 0.85rem 2.25rem;
+        font-family: var(--font-sans);
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, scale 0.1s;
+      }
+
+      .share-btn:hover {
+        background: var(--color-accent);
+        color: #fff;
+      }
+
+      .share-btn:active { scale: 0.97; }
+
+      .share-btn.copied {
+        background: #2BB27E;
+        color: #fff;
+      }
+
+      .share-hint {
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        color: var(--color-faint);
+        text-transform: uppercase;
+        transition: color 0.2s;
+      }
+
+      /* ── Hero share button (compact, outlined) ── */
+      .hero-share-btn {
+        background: transparent;
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        padding: 0.6rem 1.5rem;
+        font-size: 0.82rem;
+        margin-block-end: 2rem;
+      }
+
+      .hero-share-btn:hover {
+        background: var(--color-text);
+        color: var(--color-bg);
+      }
+
+      .hero-share-btn.copied {
+        background: #2BB27E;
+        color: #fff;
+        border-color: #2BB27E;
+      }
+
+      /* ── Footer ── */
+      .site-footer {
+        border-block-start: 1px solid var(--color-border);
+        padding-block: 2.5rem;
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--color-faint);
+      }
+
+      .site-footer a {
+        color: var(--color-muted);
+      }
+
+      .site-footer p + p {
+        margin-block-start: 0.35rem;
+      }
+
+      /* ── Responsive slack on tiny screens ── */
+      @media (max-width: 480px) {
+        .slack-msg { grid-template-columns: 44px 1fr; }
+        .slack-typing { padding-inline-start: calc(0.75rem + 44px); }
+      }
+    }
+
+    /* ================================================================
+       ANIMATIONS
+    ================================================================ */
+    @layer animations {
+      @keyframes grow-x {
+        from { scale: 0 1; }
+        to   { scale: 1 1; }
+      }
+
+      @keyframes bounce-y {
+        0%, 100% { transform: translateY(0); }
+        50%       { transform: translateY(7px); }
+      }
+
+      @keyframes typing-dot {
+        0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+        30%            { opacity: 1;   transform: translateY(-2px); }
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        @supports (animation-timeline: view()) {
+          @keyframes fade-up {
+            from { opacity: 0; translate: 0 2.5rem; }
+            to   { opacity: 1; translate: 0 0; }
+          }
+
+          @keyframes card-enter {
+            from { opacity: 0; scale: 0.98; translate: 0 1.5rem; }
+            to   { opacity: 1; scale: 1;    translate: 0 0; }
+          }
+
+          @keyframes slide-in {
+            from { opacity: 0; translate: -1.25rem 0; }
+            to   { opacity: 1; translate: 0 0; }
+          }
+
+          .section {
+            animation: fade-up linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 18%;
+          }
+
+          .slack-window,
+          .ai-box {
+            animation: card-enter linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 22%;
+          }
+
+          .callout {
+            animation: card-enter linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 25%;
+          }
+
+          .rules-list li,
+          .problem-list li {
+            animation: slide-in linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 38%;
+          }
+        }
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <main>
+
+    <!-- ══════════════════════════════════════
+         HERO
+    ══════════════════════════════════════ -->
+    <header class="hero" role="banner">
+      <div class="hero-badge" aria-label="manifesto de comunicação assíncrona">manifesto de comunicação assíncrona</div>
+
+      <h1 class="hero-h1">Fala<br>Logo!</h1>
+
+      <p class="hero-tagline">
+        Não manda só <strong>"oi"</strong>. A pessoa do outro lado não é um bot de atendimento esperando você digitar o que precisa.
+        <br>Bom — falando nisso — o bot também não.
+      </p>
+
+      <button class="share-btn hero-share-btn" id="hero-share-btn" type="button" aria-label="Compartilhar ou copiar link do Fala Logo">
+        <!-- icon + label injected by JS -->
+      </button>
+
+      <div class="scroll-hint" aria-hidden="true">
+        <span class="scroll-hint-arrow">↓</span>
+        entende o problema
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════
+         SEÇÃO I — O PROBLEMA
+    ══════════════════════════════════════ -->
+    <hr class="section-rule">
+
+    <article class="section" aria-labelledby="h2-problema">
+      <div class="container">
+        <div class="section-inner">
+
+          <div class="roman" aria-hidden="true">I</div>
+
+          <div>
+            <div class="section-label">o problema</div>
+            <h2 class="section-h2" id="h2-problema">Você faz isso.<br>Admite.</h2>
+
+            <p>
+              Sabe aquela sensação de receber um <strong>"oi"</strong> no chat de trabalho e ficar com o coração na mão esperando o resto da mensagem? Pois é. Você provavelmente já fez isso com alguém.
+            </p>
+            <p>
+              A pessoa recebe o "oi", para o que estava fazendo, fica esperando, troca de contexto mentalmente — e aí fica dois minutos olhando os três pontinhos aparecerem e sumirem enquanto você redige sua mensagem real.
+            </p>
+
+            <blockquote class="pull-quote">
+              "Dois contextos trocados. Uma interrupção. E ainda não chegamos na pergunta."
+            </blockquote>
+
+            <div class="badge badge--bad">jeito ruim</div>
+            <div class="slack-window" role="img" aria-label="Exemplo de conversa ruim: Fulano manda só oi, espera respostas e só depois faz a pergunta real">
+              <div class="slack-messages">
+                <div class="slack-date-divider">Hoje</div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#C97B2C" aria-hidden="true">F</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Fulano</span><span class="s-time">14:03</span></div>
+                    <div class="s-text">Oi!</div>
+                  </div>
+                </div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Você</span><span class="s-time">14:03</span></div>
+                    <div class="s-text">Oi!</div>
+                  </div>
+                </div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#C97B2C" aria-hidden="true">F</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Fulano</span><span class="s-time">14:04</span></div>
+                    <div class="s-text">Tudo bem?</div>
+                  </div>
+                </div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Você</span><span class="s-time">14:04</span></div>
+                    <div class="s-text">Tudo sim, e você?</div>
+                  </div>
+                </div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#C97B2C" aria-hidden="true">F</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Fulano</span><span class="s-time">14:05</span></div>
+                    <div class="s-text">Tô bem!</div>
+                  </div>
+                </div>
+
+                <div class="slack-wait">5 minutos depois</div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#C97B2C" aria-hidden="true">F</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Fulano</span><span class="s-time">14:10</span></div>
+                    <div class="s-text">Você sabe onde fica o arquivo da apresentação do cliente da semana passada? Aquela do projeto Alfa?</div>
+                  </div>
+                </div>
+
+                <div class="slack-typing">
+                  <div class="typing-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                  Você está digitando…
+                </div>
+              </div>
+            </div>
+
+            <p>Sete minutos desperdiçados. Dois contextos trocados. Uma pessoa que parou de trabalhar pra responder um "oi" sem saber o motivo.</p>
+
+            <div class="badge badge--good">jeito certo</div>
+            <div class="slack-window" role="img" aria-label="Exemplo de conversa eficiente: Fulano inclui a pergunta já na primeira mensagem">
+              <div class="slack-messages">
+                <div class="slack-date-divider">Hoje</div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#C97B2C" aria-hidden="true">F</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Fulano</span><span class="s-time">14:03</span></div>
+                    <div class="s-text">Oi! Você sabe onde tá o arquivo da apresentação do cliente da semana passada? Aquela do projeto Alfa.</div>
+                  </div>
+                </div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Você</span><span class="s-time">14:04</span></div>
+                    <div class="s-text">Tá na pasta /projetos/alfa/2025-Q1. Arquivo "apresentação-cliente-v3.pptx"</div>
+                  </div>
+                </div>
+
+                <div class="slack-msg">
+                  <div class="s-avatar-col"><div class="s-avatar" style="background:#C97B2C" aria-hidden="true">F</div></div>
+                  <div class="s-body">
+                    <div class="s-meta"><span class="s-name">Fulano</span><span class="s-time">14:04</span></div>
+                    <div class="s-text">Perfeito, obrigado!</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p>Um minuto. Uma troca. Todo mundo volta ao trabalho.</p>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════
+         SEÇÃO II — POR QUE IMPORTA
+    ══════════════════════════════════════ -->
+    <hr class="section-rule">
+
+    <article class="section" aria-labelledby="h2-porque">
+      <div class="container">
+        <div class="section-inner">
+
+          <div class="roman" aria-hidden="true">II</div>
+
+          <div>
+            <div class="section-label">por que importa</div>
+            <h2 class="section-h2" id="h2-porque">Comunicação assíncrona não é uma ligação telefônica.</h2>
+
+            <p>
+              Em uma ligação, você precisa cumprimentar primeiro pra saber se a pessoa está disponível. Faz sentido.
+            </p>
+            <p>
+              No chat? A pessoa vai ler quando puder. Se não der agora, ela responde depois. <strong>Você não precisa checar a disponibilidade antes de falar o que precisa.</strong> É justamente pra isso que o assíncrono existe.
+            </p>
+            <p>
+              Quando você manda só "oi" e espera resposta pra continuar, você está pegando o pior dos dois mundos: a lentidão do assíncrono com a pressão de espera do síncrono.
+            </p>
+
+            <ul class="problem-list" role="list" aria-label="Problemas causados pelo 'oi' isolado">
+              <li>
+                <span class="li-icon" aria-hidden="true">🔴</span>
+                <span>A pessoa para o que está fazendo pra responder seu "oi"</span>
+              </li>
+              <li>
+                <span class="li-icon" aria-hidden="true">🔴</span>
+                <span>Ela fica bloqueada esperando você digitar o que realmente precisa</span>
+              </li>
+              <li>
+                <span class="li-icon" aria-hidden="true">🔴</span>
+                <span>Ela troca de contexto duas vezes — uma pra "oi", outra pra sua pergunta real</span>
+              </li>
+              <li>
+                <span class="li-icon" aria-hidden="true">🔴</span>
+                <span>Se ela não puder responder na hora, sua pergunta chega mais tarde de qualquer jeito</span>
+              </li>
+              <li>
+                <span class="li-icon" aria-hidden="true">🔴</span>
+                <span>Você também fica esperando, sem conseguir resolver nada</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════
+         SEÇÃO III — BÔNUS: IAs
+    ══════════════════════════════════════ -->
+    <hr class="section-rule">
+
+    <article class="section" aria-labelledby="h2-ia">
+      <div class="container">
+        <div class="section-inner">
+
+          <div class="roman" aria-hidden="true">III</div>
+
+          <div>
+            <div class="section-label">bônus: vale pra IA também</div>
+            <h2 class="section-h2" id="h2-ia">Sim, o ChatGPT, o Claude e o Gemini também agradecem.</h2>
+
+            <p>
+              Sabe o instinto de chegar pra IA como se fosse apresentar pra um amigo novo? Pois é. Não precisa.
+            </p>
+            <p>
+              Cumprimentar uma IA antes de pedir ajuda é como ligar pro 192 e perguntar se a atendente está bem antes de falar o número do voo. Fofo. Inútil.
+            </p>
+
+            <div class="ai-box">
+              <div class="ai-tag" aria-label="zona de IA">🤖 zona de IA</div>
+              <h3 class="ai-box-heading">A IA não precisa de aquecimento.</h3>
+              <p>
+                Ela não vai ficar ofendida se você não perguntar como ela está. Ela não tem um dia ruim. Ela não precisa de contexto emocional antes de trabalhar.
+                <strong>Ela só quer — e foi treinada — pra resolver seu problema.</strong>
+              </p>
+
+              <div class="badge badge--bad" style="margin-block-start: 1.5rem;">interação que desperdiça tokens</div>
+              <div class="slack-window" role="img" aria-label="Exemplo ruim de uso de IA: cumprimentos antes da pergunta real">
+                <div class="slack-messages">
+                  <div class="slack-date-divider">Hoje</div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">Você</span><span class="s-time">09:01</span></div>
+                      <div class="s-text">Oi!</div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#1164A3" aria-hidden="true">IA</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">IA Assistente</span><span class="s-time">09:01</span></div>
+                      <div class="s-text">Olá! Como posso te ajudar hoje?</div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">Você</span><span class="s-time">09:01</span></div>
+                      <div class="s-text">Tá bem?</div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#1164A3" aria-hidden="true">IA</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">IA Assistente</span><span class="s-time">09:01</span></div>
+                      <div class="s-text">Estou ótimo, obrigado por perguntar! 😊 Em que posso te ajudar?</div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">Você</span><span class="s-time">09:02</span></div>
+                      <div class="s-text">Tenho uma dúvida...</div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#1164A3" aria-hidden="true">IA</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">IA Assistente</span><span class="s-time">09:02</span></div>
+                      <div class="s-text">Claro! Pode perguntar à vontade!</div>
+                    </div>
+                  </div>
+
+                  <div class="slack-wait">contexto sendo destruído…</div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">Você</span><span class="s-time">09:04</span></div>
+                      <div class="s-text">Como eu inverto uma lista em Python?</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="badge badge--good" style="margin-block-start: 1.25rem;">do jeito que funciona</div>
+              <div class="slack-window" role="img" aria-label="Exemplo bom de uso de IA: pergunta direta na primeira mensagem">
+                <div class="slack-messages">
+                  <div class="slack-date-divider">Hoje</div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#2C5282" aria-hidden="true">V</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">Você</span><span class="s-time">09:01</span></div>
+                      <div class="s-text">Como eu inverto uma lista em Python?</div>
+                    </div>
+                  </div>
+
+                  <div class="slack-msg">
+                    <div class="s-avatar-col"><div class="s-avatar" style="background:#1164A3" aria-hidden="true">IA</div></div>
+                    <div class="s-body">
+                      <div class="s-meta"><span class="s-name">IA Assistente</span><span class="s-time">09:01</span></div>
+                      <div class="s-text">Você pode usar <code>lista.reverse()</code> pra inverter no lugar, ou <code>lista[::-1]</code> pra criar uma nova lista invertida.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p>
+              Quanto mais direto você for, <strong>mais direta e útil é a resposta que você recebe.</strong> A IA interpreta o tom da sua mensagem. Mensagem vaga = resposta vaga.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════
+         SEÇÃO IV — COMO FAZER CERTO
+    ══════════════════════════════════════ -->
+    <hr class="section-rule">
+
+    <article class="section" aria-labelledby="h2-como">
+      <div class="container">
+        <div class="section-inner">
+
+          <div class="roman" aria-hidden="true">IV</div>
+
+          <div>
+            <div class="section-label">como fazer certo</div>
+            <h2 class="section-h2" id="h2-como">A fórmula não é complicada.</h2>
+
+            <p>Você pode cumprimentar. Só não espere a resposta do cumprimento pra falar o que precisa. Manda tudo junto.</p>
+
+            <ul class="rules-list" role="list" aria-label="Regras para comunicação direta e eficiente">
+              <li>
+                <span class="li-icon" aria-hidden="true">✅</span>
+                <div><strong>Contexto primeiro.</strong> Quem é você, de que projeto se trata, qual é a situação.</div>
+              </li>
+              <li>
+                <span class="li-icon" aria-hidden="true">✅</span>
+                <div><strong>Pergunta clara.</strong> O que você quer saber ou que ajuda você precisa, especificamente.</div>
+              </li>
+              <li>
+                <span class="li-icon" aria-hidden="true">✅</span>
+                <div><strong>O que você já tentou.</strong> Especialmente em suporte técnico — economiza tempo dos dois lados.</div>
+              </li>
+              <li>
+                <span class="li-icon" aria-hidden="true">✅</span>
+                <div><strong>Urgência real</strong>, se houver. "Preciso até às 15h" é informação útil. "Urgente!!!" não é.</div>
+              </li>
+            </ul>
+
+            <div class="callout" role="note">
+              <strong>Exceção válida:</strong> às vezes você realmente quer só bater papo, sem objetivo nenhum. Tudo bem! Deixa isso claro: <em>"Ei, tenho 10 minutos, quer bater um papo?"</em> — isso é diferente de um "oi" misterioso que deixa a pessoa ansiosa esperando.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════
+         SEÇÃO V — COMPARTILHA
+    ══════════════════════════════════════ -->
+    <hr class="section-rule">
+
+    <section class="cta-section" aria-labelledby="h2-cta">
+      <div class="container">
+        <div class="section-label" style="margin-inline: auto; display: block; text-align: center;">compartilha</div>
+        <h2 class="cta-h2" id="h2-cta">Manda o link<br>pra aquela pessoa.</h2>
+        <p>
+          Você sabe quem é. Aquela que manda "oi" e some por dez minutos. Aquela que pergunta <em>"posso te fazer uma pergunta?"</em> antes de fazer a pergunta. Aquela que manda <em>"você tem um tempinho?"</em> e espera você confirmar antes de continuar.
+        </p>
+        <p>Manda com carinho. A produtividade coletiva agradece.</p>
+
+        <div class="share-actions">
+          <button class="share-btn" id="share-btn" type="button" aria-label="Compartilhar ou copiar link do Fala Logo">
+            <!-- icon + label injected by JS -->
+          </button>
+          <span class="share-hint" id="share-hint" aria-live="polite">falalogo.com</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>Inspirado no <a href="https://nohello.com" target="_blank" rel="noopener noreferrer">nohello.com</a> · feito em pt-br com amor e impaciência</p>
+      <p>Sim, você pode mandar o link direto. Sem "oi" antes.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const PAGE_URL = location.origin + location.pathname;
+
+      const SHARE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+      const COPY_SVG  = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+      const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+      const btn      = document.getElementById('share-btn');
+      const heroBtn  = document.getElementById('hero-share-btn');
+      const hint     = document.getElementById('share-hint');
+
+      const canShare = !!navigator.share;
+      const label    = canShare ? ' Compartilhar' : ' Copiar link';
+      const icon     = canShare ? SHARE_SVG : COPY_SVG;
+
+      btn.innerHTML     = icon + label;
+      heroBtn.innerHTML = icon + label;
+
+      async function handleShare(clickedBtn) {
+        if (canShare) {
+          try {
+            await navigator.share({
+              title: 'Fala Logo!',
+              text: 'Não manda só "oi". Fala logo o que você precisa. Vale pra humanos e IAs.',
+              url: PAGE_URL,
+            });
+          } catch (_) { /* usuário cancelou */ }
+          return;
+        }
+
+        // Fallback: clipboard API
+        try {
+          await navigator.clipboard.writeText(PAGE_URL);
+          [btn, heroBtn].forEach(function (b) {
+            b.innerHTML = CHECK_SVG + ' Copiado!';
+            b.classList.add('copied');
+          });
+          hint.textContent = 'link copiado para a área de transferência';
+          setTimeout(function () {
+            [btn, heroBtn].forEach(function (b) {
+              b.innerHTML = icon + label;
+              b.classList.remove('copied');
+            });
+            hint.textContent = 'falalogo.com';
+          }, 2500);
+        } catch (_) {
+          window.prompt('Copie o link:', PAGE_URL);
+        }
+      }
+
+      btn.addEventListener('click',     function () { handleShare(btn); });
+      heroBtn.addEventListener('click', function () { handleShare(heroBtn); });
+    }());
+  </script>
+
+</body>
+</html>
